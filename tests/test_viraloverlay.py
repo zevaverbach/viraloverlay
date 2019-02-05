@@ -52,10 +52,39 @@ def test_that_ffmpeg_command_is_as_expected_with_one_overlay(filepath):
     assert viral_overlay.command == (
         
        f"ffmpeg -y -i {filepath} -vf \"drawtext=enable='between(t,1,2)':"
+       f"fontfile={config.DARWIN_FONT_FILEPATH}:text='hi':fontsize={config.FONT_SIZE}\""
+        " -acodec copy "
+       f"{append_string_to_filepath(filepath, config.APPEND_TO_OVERLAID_VIDS)}"
+    )
+
+def test_that_ffmpeg_command_is_as_expected_with_two_overlays(filepath):
+    viral_overlay = ViralOverlay(
+            filepath, 
+            overlays=(('hi', 1, 2), ('bye', 5, 7))
+            )
+    viral_overlay._prepare_command()
+    assert viral_overlay.command == (
+        
+       f"ffmpeg -y -i {filepath} -vf "
+        "\"drawtext=enable='between(t,1,2)':"
+        f"fontfile={config.DARWIN_FONT_FILEPATH}:text='hi':fontsize={config.FONT_SIZE},"
+        "drawtext=enable='between(t,5,7)':"
+        f"fontfile={config.DARWIN_FONT_FILEPATH}:text='bye':fontsize={config.FONT_SIZE}\""
+        " -acodec copy "
+       f"{append_string_to_filepath(filepath, config.APPEND_TO_OVERLAID_VIDS)}"
+    )
+
+def test_that_floats_work(filepath):
+    viral_overlay = ViralOverlay(filepath, overlays=('hi', 1.5, 2.25))
+    viral_overlay._prepare_command()
+    assert viral_overlay.command == (
+        
+       f"ffmpeg -y -i {filepath} -vf \"drawtext=enable='between(t,1.5,2.25)':"
        f"fontfile={config.DARWIN_FONT_FILEPATH}:text='hi'\""
         " -acodec copy "
        f"{append_string_to_filepath(filepath, config.APPEND_TO_OVERLAID_VIDS)}"
     )
+
 
 
 def test_that_it_works():

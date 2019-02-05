@@ -10,7 +10,6 @@ from helpers import (
 
 
 
-
 @mock.patch('platform.system')
 def test_get_platform_font_path(patched_system):
 
@@ -25,7 +24,6 @@ def test_get_platform_font_path(patched_system):
     patched_system.return_value = 'Windows'
     with pytest.raises(UnsupportedSystem):
         get_platform_font_path()
-
 
 
 def test_append_string_to_filepath():

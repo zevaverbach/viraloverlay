@@ -2,6 +2,14 @@ class NoFont(Exception):
     pass
 
 
+class NoFontSize(NoFont):
+    pass
+
+
+class NoFontColor(NoFont):
+    pass
+
+
 class UnsupportedSystem(Exception):
     pass
 
