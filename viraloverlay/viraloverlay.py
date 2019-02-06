@@ -13,6 +13,7 @@ from viraloverlay.exceptions import UnsupportedSystem, NoFont, NoOverlays
 
 Numeric = Union[float, int]
 
+
 class Overlay:
 
     def __init__(
@@ -65,6 +66,7 @@ class ViralOverlay:
             assert os.path.exists(filepath)
         except AssertionError:
             raise FileNotFoundError
+
         self.filepath = filepath
         validate_font_path(font_path)
         self.font_path = font_path

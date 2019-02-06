@@ -1,0 +1,8 @@
+- require API key for download
+- meter the downloads
+- verify email for getting an API key
+  - block one-time email domains
+    - get one-time email domains
+- what's the file size limit in Twitter?
+  - 2 minutes and 20 seconds 
+  - 512MB

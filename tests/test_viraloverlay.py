@@ -57,6 +57,7 @@ def test_that_ffmpeg_command_is_as_expected_with_one_overlay(filepath):
        f"{append_string_to_filepath(filepath, config.APPEND_TO_OVERLAID_VIDS)}"
     )
 
+
 def test_that_ffmpeg_command_is_as_expected_with_two_overlays(filepath):
     viral_overlay = ViralOverlay(
             filepath, 
@@ -73,6 +74,7 @@ def test_that_ffmpeg_command_is_as_expected_with_two_overlays(filepath):
         " -acodec copy "
        f"{append_string_to_filepath(filepath, config.APPEND_TO_OVERLAID_VIDS)}"
     )
+
 
 def test_that_floats_work(filepath):
     viral_overlay = ViralOverlay(filepath, overlays=('hi', 1.5, 2.25))
