@@ -1,5 +1,5 @@
 # ViralOverlay™
 
-Add styled, timed text to videos to earn respect (~=likes) from internet strangers!
+Add styled, timed text to videos 'n GIFs for lulz!  Kinda like this:
 
-More soon...
+![Beer](tester_overlaid.gif)
