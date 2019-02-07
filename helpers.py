@@ -66,3 +66,10 @@ def num_to_hhmmss(num: Numeric):
     hours = f"{int(num) // 3600:0>2}"
     hhmmss = f"{hours}:{minutes}:{seconds}{decaseconds}"
     return hhmmss
+
+
+def shrink_video(filepath):
+    new_filepath = f'{os.path.splitext(filepath)[0]}_shrunk.mp4'
+    shell_call(f'ffmpeg -i "{filepath}" -vf scale=480:260 "{new_filepath}"')
+    return new_filepath
+
