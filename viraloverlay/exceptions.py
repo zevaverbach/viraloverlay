@@ -16,3 +16,7 @@ class UnsupportedSystem(Exception):
 
 class NoOverlays(Exception):
     pass
+
+
+class MissingArgument(Exception):
+    pass

@@ -1,17 +1,22 @@
+import json
 import math
 import os
 from subprocess import check_output
-from typing import Union
 
 from config import APPEND_TO_OVERLAID_VIDS, FONT_COLOR, FONT_SIZE
+from custom_types import Numeric
 from helpers import (
         shell_call, 
         get_platform_font_path, 
         append_string_to_filepath
         )
-from viraloverlay.exceptions import UnsupportedSystem, NoFont, NoOverlays
+from viraloverlay.exceptions import (
+        UnsupportedSystem,
+        NoFont,
+        NoOverlays,
+        MissingArgument,
+        )
 
-Numeric = Union[float, int]
 
 
 class Overlay:
@@ -33,15 +38,16 @@ class Overlay:
         self.font_color = font_color
 
     def __str__(self):
-        return (f"drawtext=enable='between(t,{self.start},{self.stop})':"
-                f"fontfile={self.font_path}:fontcolor={self.font_color}:"
-                f"text='{self.text}':fontsize={self.font_size}")
+        return (
+                f"drawtext=enable='between(t,{self.start},{self.stop})':"
+                f"fontfile={self.font_path}:"
+                f"fontcolor={self.font_color}:"
+                f"text='{self.text}':"
+                f"fontsize={self.font_size}"
+                )
 
 
 class ViralOverlay:
-
-    # TODO: add colors, sizes, movement, position
-    # https://ffmpeg.org/ffmpeg-filters.html#Examples-56
 
     def __init__(
             self, 
@@ -102,47 +108,32 @@ class ViralOverlay:
         return shell_call(self.command)
 
     def add(self, overlay_or_overlays):
-        if not isinstance(overlay_or_overlays[0], tuple):
-            overlays = [overlay_or_overlays]
+        if not isinstance(overlay_or_overlays, tuple):
+            if isinstance(overlay_or_overlays, str):
+                overlays_path = overlay_or_overlays
+                with open(overlays_path) as fin:
+                    overlays = json.load(fin)
+            else:
+                overlays = [overlay_or_overlays]
         else:
             overlays = overlay_or_overlays
 
         for overlay in overlays:
-            validate_overlay(overlay)
-            if len(overlay) < 4:
-                if self.font_path is None:
-                    raise NoFont(
-                        'Please provide a font_path either to ViralOverlay'
-                        ' or each overlay')
-                overlay = *overlay, self.font_path
-            if len(overlay) < 5:
-                if self.font_size is None:
-                    raise NoFontSize(
-                        'Please provide a font_size either to ViralOverlay'
-                        ' or each overlay')
-                overlay = *overlay, self.font_size
-            if len(overlay) < 6:
-                if self.font_color is None:
-                    raise NoFontColor(
-                       'Please provide a font_color either to ViralOverlay'
-                       ' or each overlay')
-                overlay = *overlay, self.font_color
-            self.overlays.append(Overlay(*overlay))
+            overlay = self.validate_and_fortify_overlay(overlay)
+            self.overlays.append(Overlay(**overlay))
 
+    def validate_and_fortify_overlay(self, overlay):
+        if (not overlay.get('text')
+                or not overlay.get('start')
+                or not overlay.get('stop')
+                ):
+            raise MissingArgument
 
-def validate_overlay(overlay):
-    if len(overlay) == 4:
-        font_path = overlay[-1]
-        assert isinstance(font_path, str)
-        assert os.path.exists(font_path)
-    text, start, stop = overlay[:3]
-    assert isinstance(text, str)
-    assert any(
-            isinstance(start, type_) 
-            for type_ in [int, float])
-    assert any(
-            isinstance(stop, type_)
-            for type_ in [int, float])
+        overlay['font_path'] = overlay.get('font_path') or self.font_path
+        overlay['font_size'] = overlay.get('font_size') or self.font_size
+        overlay['font_color'] = overlay.get('font_color') or self.font_color
+
+        return overlay
 
 
 def validate_font_path(font_path):
