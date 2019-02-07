@@ -2,4 +2,4 @@
 
 Add styled, timed text to videos 'n GIFs!  Kinda like this:
 
-![Beer](tester_overlaid.gif)
+![Beer](tester_shrunk_overlaid.gif)
