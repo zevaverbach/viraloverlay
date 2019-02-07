@@ -65,7 +65,4 @@ def num_to_hhmmss(num: Numeric):
     minutes = f"{int(num) // 60 % 60:0>2}"
     hours = f"{int(num) // 3600:0>2}"
     hhmmss = f"{hours}:{minutes}:{seconds}{decaseconds}"
-    assert (
-        re.match('[0-9][0-9]:[0-9][0-9]:[0-9][0-9].*', hhmmss), 
-        f'{hhmmss} {num} sec:{seconds} deca:{decaseconds}')
     return hhmmss

@@ -3,7 +3,13 @@ import math
 import os
 from subprocess import check_output
 
-from config import APPEND_TO_OVERLAID_VIDS, FONT_COLOR, FONT_SIZE
+from config import (
+        APPEND_TO_OVERLAID_VIDS,
+        FONT_COLOR,
+        FONT_SIZE,
+        TEXT_POSITION_X,
+        TEXT_POSITION_Y,
+        )
 from custom_types import Numeric
 from helpers import (
         shell_call, 
@@ -29,6 +35,8 @@ class Overlay:
             font_path: str,
             font_size: int,
             font_color: int,
+            text_position_x,
+            text_position_y,
             ):
         self.text = text
         self.start = start
@@ -37,13 +45,25 @@ class Overlay:
         self.font_size = font_size
         self.font_color = font_color
 
+        self.text_position_x = text_position_x
+        if isinstance(text_position_x, str):
+            if text_position_x == 'center':
+                self.text_position_x = 'x=(main_w/2-text_w/2)'
+
+        self.text_position_y = text_position_y
+        if isinstance(text_position_y, str):
+            if text_position_y == 'bottom':
+                self.text_position_y = 'y=main_h-(text_h*2)'
+
     def __str__(self):
         return (
                 f"drawtext=enable='between(t,{self.start},{self.stop})':"
                 f"fontfile={self.font_path}:"
                 f"fontcolor={self.font_color}:"
                 f"text='{self.text}':"
-                f"fontsize={self.font_size}"
+                f"fontsize={self.font_size}:"
+                f"{self.text_position_x}:"
+                f"{self.text_position_y}:"
                 )
 
 
@@ -55,6 +75,8 @@ class ViralOverlay:
             font_path=None,
             font_color=None,
             font_size=None,
+            text_position_x=None,
+            text_position_y=None,
             overlays=None):
         """
         Each overlay should be a tuple in the format 
@@ -78,6 +100,8 @@ class ViralOverlay:
         self.font_path = font_path
         self.font_size = font_size or FONT_SIZE
         self.font_color = font_color or FONT_COLOR
+        self.text_position_x = text_position_x or TEXT_POSITION_X
+        self.text_position_y = text_position_y or TEXT_POSITION_Y
         self.overlays = []
 
         if overlays is not None:
@@ -86,11 +110,15 @@ class ViralOverlay:
     def go(self):
         self.export()
 
+    def gif(self):
+        self._prepare_command(output_filetype='gif')
+        self._make()
+
     def export(self):
         self._prepare_command()
         self._make()
 
-    def _prepare_command(self):
+    def _prepare_command(self, output_filetype=None):
         if not self.overlays:
             raise NoOverlays(
                'Please add at least one overlay tuple via `ViralOverlay.add`.')
@@ -98,6 +126,9 @@ class ViralOverlay:
         new_filepath = append_string_to_filepath(
                 self.filepath,
                 APPEND_TO_OVERLAID_VIDS)
+
+        if output_filetype:
+            new_filepath = '.'.join(new_filepath.split('.')[:-1]) + '.' + output_filetype
         overlay_args = ','.join(str(o) for o in self.overlays)
 
         self.command = (
@@ -132,6 +163,10 @@ class ViralOverlay:
         overlay['font_path'] = overlay.get('font_path') or self.font_path
         overlay['font_size'] = overlay.get('font_size') or self.font_size
         overlay['font_color'] = overlay.get('font_color') or self.font_color
+        overlay['text_position_x'] = (overlay.get('text_position_x')
+                                      or self.text_position_x)
+        overlay['text_position_y'] = (overlay.get('text_position_y')
+                                      or self.text_position_y)
 
         return overlay
 
