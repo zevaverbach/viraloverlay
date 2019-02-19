@@ -23,9 +23,13 @@ def get_platform_font_path():
 
 
 def get_all_font_paths():
+    """
+    Get all available fonts on Linux. This might require installing
+    fontconfig.
+    """
     raw_font_list = subprocess.check_output(
             'fc-list', shell=True).decode().split('\n')
-    font_paths = [f.split(':')[0] for f in raw_font_list]
+    return [f.split(':')[0] for f in raw_font_list]
 
 
 def get_linux_font_filepath():
