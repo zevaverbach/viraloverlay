@@ -14,9 +14,26 @@ def shell_call(command):
 
 def get_platform_font_path():
     system = platform.system()
-    if system != 'Darwin':
+    if system == 'Darwin':
+        return config.DARWIN_FONT_FILEPATH
+    elif system == 'Linux':
+        return get_linux_font_filepath()
+    else:
         raise UnsupportedSystem
-    return config.DARWIN_FONT_FILEPATH
+
+
+def get_all_font_paths():
+    raw_font_list = subprocess.check_output(
+            'fc-list', shell=True).decode().split('\n')
+    font_paths = [f.split(':')[0] for f in raw_font_list]
+
+
+def get_linux_font_filepath():
+    all_font_paths = get_all_font_paths()
+    for font_path in all_font_paths:
+        if 'LiberationSans-Regular.ttf' in font_path:
+            return font_path
+    return all_font_paths[0]
 
 
 def append_string_to_filepath(filepath, string):
