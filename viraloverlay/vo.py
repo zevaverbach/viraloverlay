@@ -14,13 +14,8 @@ def cli(filepath, overlay_data, gif):
     """
     Creates a new video with text overlaid on it.
 
-       overlay_data: a JSON file path
-                     OR
-                     a JSON-formatted string containing an array of overlays, 
-                     each containing key-value pairs of at least 
-                         "text", "start", and "stop".
-                     optional keys: "font_size", "font_color", "text_position_x", 
-                         and "text_position_y"
+       OVERLAY_DATA: a JSON file path OR a JSON-formatted string containing an array of overlays, each containing key-value pairs of at least "text", "start", and "stop".
+       optional keys: "font_size", "font_color", "text_position_x", and "text_position_y"
     """
     if overlay_data.endswith('.json') and Path(overlay_data).exists():
         with open(overlay_data) as fin:
