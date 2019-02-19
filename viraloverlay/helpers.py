@@ -1,7 +1,7 @@
 import os
 import platform
 import re
-from subprocess import check_output
+import subprocess
 
 from . import config
 from .custom_types import Numeric
@@ -9,7 +9,7 @@ from .exceptions import UnsupportedSystem
 
 
 def shell_call(command):
-    return check_output(command, shell=True)
+    return subprocess.check_output(command, shell=True)
 
 
 def get_platform_font_path():
@@ -46,7 +46,7 @@ def get_excerpt(filepath, start, duration, outpath=None):
         basename, extension = os.path.splitext(filepath)
     outpath = outpath or make_excerpt_filename(filepath, start, duration)
     start_hhmmss, duration_hhmmss = num_to_hhmmss(start), num_to_hhmmss(duration)
-    return check_output(
+    return subprocess.check_output(
             _make_excerpt_command(
                 filepath, 
                 start_hhmmss,
