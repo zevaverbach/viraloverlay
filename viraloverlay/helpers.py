@@ -3,9 +3,9 @@ import platform
 import re
 from subprocess import check_output
 
-import config
-from custom_types import Numeric
-from viraloverlay.exceptions import UnsupportedSystem
+from . import config
+from .custom_types import Numeric
+from .exceptions import UnsupportedSystem
 
 
 def shell_call(command):

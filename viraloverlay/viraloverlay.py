@@ -1,26 +1,29 @@
 import json
 import math
 import os
+import sys
 from subprocess import check_output
 
-from config import (
+from .config import (
         APPEND_TO_OVERLAID_VIDS,
         FONT_COLOR,
         FONT_SIZE,
         TEXT_POSITION_X,
         TEXT_POSITION_Y,
+        MAX_ARG_CHARS,
         )
-from custom_types import Numeric
-from helpers import (
+from .custom_types import Numeric
+from .helpers import (
         shell_call, 
         get_platform_font_path, 
-        append_string_to_filepath
+        append_string_to_filepath,
         )
-from viraloverlay.exceptions import (
+from .exceptions import (
         UnsupportedSystem,
         NoFont,
         NoOverlays,
         MissingArgument,
+        LengthError,
         )
 
 
@@ -56,14 +59,17 @@ class Overlay:
                 self.text_position_y = 'y=main_h-(text_h*2)'
 
     def __str__(self):
+        text = self.text.replace("'", "\\\\\\'")
+        text = text.replace("[", "\\\\\[")
+        text = text.replace("]", "\\\\\]")
         return (
                 f"drawtext=enable='between(t,{self.start},{self.stop})':"
                 f"fontfile={self.font_path}:"
                 f"fontcolor={self.font_color}:"
-                f"text='{self.text}':"
+                f'text="{text}":'
                 f"fontsize={self.font_size}:"
                 f"{self.text_position_x}:"
-                f"{self.text_position_y}:"
+                f"{self.text_position_y}"
                 )
 
 
@@ -129,25 +135,37 @@ class ViralOverlay:
 
         if output_filetype:
             new_filepath = '.'.join(new_filepath.split('.')[:-1]) + '.' + output_filetype
+        overlay_arg_strings = []
+
         overlay_args = ','.join(str(o) for o in self.overlays)
+
+        if len(overlay_args) > MAX_ARG_CHARS:
+            raise LengthError(
+                f'Your system only allows {MAX_ARG_CHARS} characters in a command,'
+                f' and the one generated here is {len(overlay_args)}!')
 
         self.command = (
             f'ffmpeg -y -i {self.filepath} -vf "{overlay_args}" -acodec '
             f'copy {new_filepath}')
 
+        self.new_filepath = new_filepath
+
     def _make(self):
-        return shell_call(self.command)
+        shell_call(self.command)
+        return self.new_filepath
 
     def add(self, overlay_or_overlays):
-        if not isinstance(overlay_or_overlays, tuple):
+        if isinstance(overlay_or_overlays, tuple):
+            overlays = overlay_or_overlays
+        elif isinstance(overlay_or_overlays, list):
+            overlays = tuple(overlay_or_overlays)
+        else:
             if isinstance(overlay_or_overlays, str):
                 overlays_path = overlay_or_overlays
                 with open(overlays_path) as fin:
                     overlays = json.load(fin)
             else:
                 overlays = [overlay_or_overlays]
-        else:
-            overlays = overlay_or_overlays
 
         for overlay in overlays:
             overlay = self.validate_and_fortify_overlay(overlay)

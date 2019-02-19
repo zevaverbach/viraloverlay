@@ -20,3 +20,7 @@ class NoOverlays(Exception):
 
 class MissingArgument(Exception):
     pass
+
+
+class LengthError(Exception):
+    pass
