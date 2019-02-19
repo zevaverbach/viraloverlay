@@ -8,9 +8,10 @@ from .viraloverlay import ViralOverlay
 
 @click.command()
 @click.option('-g', '--gif', is_flag=True, help='output to GIF instead of MP4')
+@click.option('-f', '--font-path', help='path to the font you\'d like to use.')
 @click.argument('filepath', type=click.Path(exists=True))
 @click.argument('overlay_data', type=str)
-def cli(filepath, overlay_data, gif):
+def cli(filepath, overlay_data, gif, font_path):
     """
     Creates a new video with text overlaid on it.
 
@@ -22,7 +23,7 @@ def cli(filepath, overlay_data, gif):
             overlay_data_json = json.loads(fin.read())
     else:
         overlay_data_json = tuple(json.loads(overlay_data))
-    v = ViralOverlay(filepath, overlays=overlay_data_json)
+    v = ViralOverlay(filepath, overlays=overlay_data_json, font_path=font_path)
     method = v.gif if gif else v.go
     new_filepath = method()
     print(f'Okay, I overlaid your text on {new_filepath}')
