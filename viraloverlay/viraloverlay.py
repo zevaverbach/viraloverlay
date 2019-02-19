@@ -114,15 +114,15 @@ class ViralOverlay:
             self.add(overlays)
 
     def go(self):
-        self.export()
+        return self.export()
 
     def gif(self):
         self._prepare_command(output_filetype='gif')
-        self._make()
+        return self._make()
 
     def export(self):
         self._prepare_command()
-        self._make()
+        return self._make()
 
     def _prepare_command(self, output_filetype=None):
         if not self.overlays:

@@ -1,4 +1,0 @@
-
-        [console_scripts]
-        vo=viraloverlay.vo:cli
-    
