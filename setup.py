@@ -6,7 +6,7 @@ with open('README.md') as file:
 
 setup(
     name="viraloverlay",
-    version="0.172",
+    version="0.173",
     py_modules=['viraloverlay'],
     url='https://github.com/zevaverbach/viraloverlay',
     install_requires=[

@@ -173,12 +173,8 @@ class ViralOverlay:
             self.overlays.append(Overlay(**overlay))
 
     def validate_and_fortify_overlay(self, overlay):
-        if (not overlay.get('text')
-                or not overlay.get('start')
-                or not overlay.get('stop')
-                ):
+        if any(key not in overlay for key in ['text', 'start', 'stop']):
             pprint(overlay)
-            print(type(overlay))
             raise MissingArgument
 
         overlay['font_path'] = overlay.get('font_path') or self.font_path
