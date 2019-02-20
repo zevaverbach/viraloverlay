@@ -1,6 +1,7 @@
 import json
 import math
 import os
+from pprint import pprint
 import sys
 from subprocess import check_output
 
@@ -176,6 +177,7 @@ class ViralOverlay:
                 or not overlay.get('start')
                 or not overlay.get('stop')
                 ):
+            pprint(overlay)
             raise MissingArgument
 
         overlay['font_path'] = overlay.get('font_path') or self.font_path
