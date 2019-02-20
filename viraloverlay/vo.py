@@ -19,9 +19,10 @@ def cli(filepath, overlay_data, gif, font_path):
     """
     if overlay_data.endswith('.json') and Path(overlay_data).exists():
         with open(overlay_data) as fin:
-            overlay_data_json = json.loads(fin.read())
+            overlay_data_json = json.loads(fin)
     else:
         overlay_data_json = tuple(json.loads(overlay_data))
+
     v = ViralOverlay(filepath, overlays=overlay_data_json, font_path=font_path)
     method = v.gif if gif else v.go
     new_filepath = method()
