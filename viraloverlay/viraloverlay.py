@@ -178,6 +178,7 @@ class ViralOverlay:
                 or not overlay.get('stop')
                 ):
             pprint(overlay)
+            print(type(overlay))
             raise MissingArgument
 
         overlay['font_path'] = overlay.get('font_path') or self.font_path
