@@ -26,4 +26,4 @@ def cli(filepath, overlay_data, gif, font_path):
     v = ViralOverlay(filepath, overlays=overlay_data_json, font_path=font_path)
     method = v.gif if gif else v.go
     new_filepath = method()
-    print(f'Okay, I overlaid your text on {new_filepath}')
+    print(new_filepath})
