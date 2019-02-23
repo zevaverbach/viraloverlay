@@ -17,7 +17,9 @@ def cli(filepath, overlay_data, gif, font_path):
 
        OVERLAY_DATA: a JSON file path OR a JSON-formatted string containing an array of overlays, each containing key-value pairs of at least "text", "start", and "stop". optional keys: "font_size", "font_color", "text_position_x", and "text_position_y"
     """
-    if overlay_data.endswith('.json') and Path(overlay_data).exists():
+    if overlay_data.endswith('.json'):
+        if not Path(overlay_data).exists():
+            raise click.ClickException(f'{overlay_data} doesn\'t exist')
         with open(overlay_data) as fin:
             overlay_data_json = json.load(fin)
     else:
